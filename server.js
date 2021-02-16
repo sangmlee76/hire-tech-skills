@@ -3,11 +3,14 @@
 //***** Create server *****//
 const express = require('express');
 require('dotenv').config();
+const pg = require('pg');
 
 //***** Setup Application Server *****//
 const app = express();
 app.use(express.urlencoded({extended:true}));
 app.use(express.static('./public'));
+const DATABASE_URL = process.env.DATABASE_URL;
+const client = new pg.Client(DATABASE_URL);
 
 //***** Global Variables *****//
 const PORT = process.env.PORT || 3111;
@@ -22,5 +25,8 @@ function proofOfLife(req, res) {
 
 //***** Helper Functions *****//
 
+
 //***** Start Server *****//
-app.listen(PORT, console.log(`We are up on ${PORT}`));
+client.connect().then(() => {
+  app.listen(PORT, console.log(`We are up on ${PORT}`));
+}).catch(err => console.error(err));
